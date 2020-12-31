@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import pygame , sys , math, time, os
+import pygame  , sys , math, time, os
 import RPi.GPIO as GPIO
 from pygame.locals import *
 os.environ['SDL_VIDEODRIVER']="fbcon"
@@ -14,7 +14,11 @@ GPIO.setup(15, GPIO.IN, GPIO.PUD_UP)
 
 pygame.init()
 bg = pygame.display.set_mode()
-mictimer = 0
+mictimer_time = 0
+mictimer_started = False
+mictimer_starttime = 0
+studtext="Studio 1 OnAir"
+song="Interpret - Titel"
 pygame.mouse.set_visible(False)
 
 # Change colour to preference (R,G,B) 255 max value
@@ -24,9 +28,10 @@ ind1colour     = (255, 0,   0  )
 ind2colour     = (255, 0,   0  )
 ind3colour     = (0,   255, 0  )
 ind4colour     = (0,   255, 255)
-offcolour      = (16,  16,  16 )
+offcolour      = (30,  30,  30 )
 timercolour    = (210, 210, 210)
 txtcolour      = (210, 210, 210)
+onaircolour    = (255, 0,   0  )
 
 # Scaling to the right size for the display
 digiclocksize  = int(bg.get_height()/8)
@@ -37,6 +42,7 @@ hradius        = bg.get_height()/3
 secradius      = hradius - (bg.get_height()/26)
 indtxtsize     = int(bg.get_height()/7)
 txtsize        = int(bg.get_height()/9)
+onairtxtsize   = int(bg.get_height()/11)
 indboxy        = int(bg.get_height()/6)
 indboxx        = int(bg.get_width()/4)
 
@@ -55,29 +61,38 @@ txthmy         = int(ycenter)
 txtsecy        = int(ycenter+digiclockspace)
 studioposx     = int(bg.get_width()*0.5)
 studioposy     = int(bg.get_height()*0.07)
+onairstudposx  = int(bg.get_width()*0.14)
+onairstudposy  = int(bg.get_height()*0.07)
+songposx   = int(bg.get_width()*0.5)
+songposy   = int(bg.get_height()*0.94)
 
 # Fonts  
 clockfont     = pygame.font.Font("font/SUBWT.ttf",digiclocksize)
 clockfontsec  = pygame.font.Font("font/SUBWT.ttf",digiclocksizesec)
 indfont       = pygame.font.Font(None,indtxtsize)
 txtfont       = pygame.font.Font(None,txtsize)
+onairfont     = pygame.font.Font(None, onairtxtsize)
 
 # Indicator text - edit text in quotes to desired i.e. "MIC" will show MIC on display
 doortext = u"TÜR" # umwandlung in utf-8 wegen Umlaut
-ind1txt       = indfont.render("ON AIR",True,bgcolour)
+ind1txt       = indfont.render("PEGEL",True,bgcolour)
 ind2txt       = indfont.render("MIC",True,bgcolour)
 ind3txt       = indfont.render("TEL",True,bgcolour)
 ind4txt       = indfont.render(doortext,True,bgcolour)
-timer         = indfont.render("00:00",True,timercolour)
+timer         = indfont.render(str(mictimer_time),True,timercolour)
 studio        = txtfont.render("Studio 1",True,txtcolour)
+onairstudio   = onairfont.render(studtext,True,onaircolour)
+songinfo      = onairfont.render(song,True,txtcolour)
 
 # Indicator positions
 txtposind1 = ind1txt.get_rect(centerx=xtxtpos,centery=ycenter*0.4)
 txtposind2 = ind2txt.get_rect(centerx=xtxtpos_left,centery=ycenter*0.8)
 txtposind3 = ind3txt.get_rect(centerx=xtxtpos,centery=ycenter*0.8)
 txtposind4 = ind4txt.get_rect(centerx=xtxtpos,centery=ycenter*1.2)
-timerpos   = timer.get_rect(centerx=xtxtpos_left,centery=ycenter*1.2)
+timerpos   = timer.get_rect(centerx=xtxtpos_left*0.67,centery=ycenter*1.2)
 studiopos  = studio.get_rect(centerx=studioposx,centery=studioposy)
+onairstudpos= onairstudio.get_rect(centerx=onairstudposx,centery=onairstudposy)
+songpos    = songinfo.get_rect(centerx=songposx,centery=songposy)
 
 # Parametric Equations of a Circle to get the markers
 # 90 Degree ofset to start at 0 seconds marker
@@ -95,12 +110,7 @@ def paraeqshx(shx):
 def paraeqshy(shy):
     return ycenter-(int(hradius*(math.sin(math.radians((shy)+90)))))
 
-def Interrupt_timer(channel):
-    global mictimer
-	
-#Interrupt für Timer
-GPIO.add_event_detect(12, GPIO.BOTH, callback = Interrupt_timer, bouncetime = 250)
-	
+    
 # This is where pygame does its tricks
 while True :
     pygame.display.update()
@@ -139,35 +149,50 @@ while True :
     txtpossec     = digiclocksec.get_rect(centerx=xclockpos,centery=txtsecy)
 
     # Function for the indicators
-    if GPIO.input(11):
+    if GPIO.input(11): #onair
         pygame.draw.rect(bg, offcolour,(xindboxpos, ind1y, indboxx, indboxy))
     else:
         pygame.draw.rect(bg, ind1colour,(xindboxpos, ind1y, indboxx, indboxy))
 
-    if GPIO.input(12):
+    if GPIO.input(12): #mic
         pygame.draw.rect(bg, offcolour,(xindboxpos_left, ind2y, indboxx, indboxy))
+        mictimer_started = False        
     else:
         pygame.draw.rect(bg, ind2colour,(xindboxpos_left, ind2y, indboxx, indboxy))
+        if  mictimer_started == False:
+                mictimer_starttime = pygame.time.get_ticks()
+                mictimer_started = True
+        
 
-    if GPIO.input(13):
+    if GPIO.input(13): #tel
         pygame.draw.rect(bg, offcolour,(xindboxpos, ind3y, indboxx, indboxy))
     else:
         pygame.draw.rect(bg, ind3colour,(xindboxpos, ind3y, indboxx, indboxy))
 
-    if GPIO.input(15):
+    if GPIO.input(15): #tür
         pygame.draw.rect(bg, offcolour,(xindboxpos, ind4y, indboxx, indboxy))
     else:
         pygame.draw.rect(bg, ind4colour,(xindboxpos, ind4y, indboxx, indboxy))
     
+    # Mictimer countup if started (current time minus starttime)
+    if mictimer_started:
+        mictimer_time = pygame.time.get_ticks() - mictimer_starttime
+
+    # Write timer and convert from ms in s, and from s in mm:ss
+    timer = indfont.render(time.strftime('%M:%S', time.gmtime(mictimer_time/1000)),True,timercolour)
+
+    
     # Render the text
     bg.blit(digiclockhm, txtposhm)
     bg.blit(digiclocksec, txtpossec)
-    bg.blit(ind1txt, txtposind1)
-    bg.blit(ind2txt, txtposind2)
-    bg.blit(ind3txt, txtposind3)
-    bg.blit(ind4txt, txtposind4)
+    bg.blit(ind1txt, txtposind1) #onair
+    bg.blit(ind2txt, txtposind2) #mic
+    bg.blit(ind3txt, txtposind3) #tel
+    bg.blit(ind4txt, txtposind4) #tür
     bg.blit(timer, timerpos)
     bg.blit(studio, studiopos)
+    bg.blit(onairstudio, onairstudpos)
+    bg.blit(songinfo, songpos)
     
     time.sleep(0.04)
     pygame.time.Clock().tick(25)
