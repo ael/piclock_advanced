@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import pygame  , sys , math, time, os
+import pygame , sys , math, time, os
 import RPi.GPIO as GPIO
 from pygame.locals import *
 os.environ['SDL_VIDEODRIVER']="fbcon"
@@ -34,8 +34,8 @@ txtcolour      = (210, 210, 210)
 onaircolour    = (255, 0,   0  )
 
 # Scaling to the right size for the display
-digiclocksize  = int(bg.get_height()/8)
-digiclocksizesec  = int(bg.get_height()/14)
+digiclocksize  = int(bg.get_height()/6)
+digiclocksizesec  = int(bg.get_height()/10)
 digiclockspace = int(bg.get_height()/6)
 dotsize        = int(bg.get_height()/110)
 hradius        = bg.get_height()/3
@@ -63,12 +63,12 @@ studioposx     = int(bg.get_width()*0.5)
 studioposy     = int(bg.get_height()*0.07)
 onairstudposx  = int(bg.get_width()*0.14)
 onairstudposy  = int(bg.get_height()*0.07)
-songposx   = int(bg.get_width()*0.5)
-songposy   = int(bg.get_height()*0.94)
+songposx       = int(bg.get_width()*0.5)
+songposy       = int(bg.get_height()*0.94)
 
 # Fonts  
-clockfont     = pygame.font.Font("font/SUBWT.ttf",digiclocksize)
-clockfontsec  = pygame.font.Font("font/SUBWT.ttf",digiclocksizesec)
+clockfont     = pygame.font.Font(None,digiclocksize)
+clockfontsec  = pygame.font.Font(None,digiclocksizesec)
 indfont       = pygame.font.Font(None,indtxtsize)
 txtfont       = pygame.font.Font(None,txtsize)
 onairfont     = pygame.font.Font(None, onairtxtsize)
