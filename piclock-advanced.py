@@ -17,8 +17,9 @@ bg = pygame.display.set_mode()
 mictimer_time = 0
 mictimer_started = False
 mictimer_starttime = 0
-studtext="Studio 1 OnAir"
+studtext="Studio 1" #define studio, where infoscreen is installed
 songfilepath="./songinfo.txt"
+onairstudiofilepath="./onairstudio.txt"
 pygame.mouse.set_visible(False)
 
 # Change colour to preference (R,G,B) 255 max value
@@ -28,7 +29,7 @@ ind1colour     = (255, 0,   0  )
 ind2colour     = (255, 0,   0  )
 ind3colour     = (0,   255, 0  )
 ind4colour     = (0,   255, 255)
-offcolour      = (30,  30,  30 )
+offcolour      = (15,  15,  15 )
 timercolour    = (210, 210, 210)
 txtcolour      = (210, 210, 210)
 onaircolour    = (255, 0,   0  )
@@ -46,6 +47,8 @@ onairtxtsize   = int(bg.get_height()/11)
 infotxtsize   = int(bg.get_height()/10)
 indboxy        = int(bg.get_height()/6)
 indboxx        = int(bg.get_width()/4)
+onairstudboxy  = int(bg.get_height()/7)
+onairstudboxx  = int(bg.get_width()/2.5)
 
 # Coords of items on display
 xclockpos      = int(bg.get_width()*0.5)
@@ -54,6 +57,9 @@ xtxtpos        = int(bg.get_width()*0.85)
 xtxtpos_left   = int(bg.get_width()*0.14)     
 xindboxpos     = int(xtxtpos-(indboxx/2))
 xindboxpos_left= int(xtxtpos_left-(indboxx/2))
+xonairstudtxt  = int (bg.get_width()*0.1)
+xonairstudbox  = int(xonairstudtxt-(onairstudboxx/2))
+yonairstudbox  = int((ycenter*0.15)-(onairstudboxy/2))
 ind1y          = int((ycenter*0.4)-(indboxy/2))  #onair     
 ind2y          = int((ycenter*0.8)-(indboxy/2))  #mic
 ind3y          = int((ycenter*0.8)-(indboxy/2))  #tel 
@@ -62,7 +68,7 @@ txthmy         = int(ycenter)
 txtsecy        = int(ycenter+digiclockspace)
 studioposx     = int(bg.get_width()*0.5)
 studioposy     = int(bg.get_height()*0.07)
-onairstudposx  = int(bg.get_width()*0.14)
+onairstudposx  = int(bg.get_width()*0.01)
 onairstudposy  = int(bg.get_height()*0.07)
 songposx       = int(bg.get_width()*0.5)
 songposy       = int(bg.get_height()*0.94)
@@ -82,7 +88,7 @@ ind2txt       = indfont.render("MIC",True,bgcolour)
 ind3txt       = indfont.render("TEL",True,bgcolour)
 ind4txt       = indfont.render(doortext,True,bgcolour)
 timer         = indfont.render(str(mictimer_time),True,timercolour)
-studio        = txtfont.render("Studio 1",True,txtcolour)
+studio        = txtfont.render(studtext,True,txtcolour)
 onairstudio   = onairfont.render(studtext,True,onaircolour)
 songinfo      = infofont.render("test",True,txtcolour)
 
@@ -93,7 +99,7 @@ txtposind3 = ind3txt.get_rect(centerx=xtxtpos,centery=ycenter*0.8)
 txtposind4 = ind4txt.get_rect(centerx=xtxtpos,centery=ycenter*1.2)
 timerpos   = timer.get_rect(centerx=xtxtpos_left*0.67,centery=ycenter*1.2)
 studiopos  = studio.get_rect(centerx=studioposx,centery=studioposy)
-onairstudpos= onairstudio.get_rect(centerx=onairstudposx,centery=onairstudposy)
+onairstudpos= onairstudio.get_rect(left=onairstudposx,centery=onairstudposy)
 songpos    = songinfo.get_rect(centerx=songposx,centery=songposy)
 
 # Parametric Equations of a Circle to get the markers
@@ -121,7 +127,14 @@ def readsonginfo():
     #else:
     #    songfile.close()
         #print (contents)
-    return contents
+    
+    return contents.strip('\n')
+
+def readonairstudio():
+    onairstudfile=codecs.open(onairstudiofilepath, "r", "utf-8")
+    contents = onairstudfile.read()
+    onairstudfile.close()
+    return contents.strip('\n')
 
 # This is where pygame does its tricks
 while True :
@@ -195,6 +208,15 @@ while True :
 
     # Update songinfo
     songinfo = onairfont.render(str(readsonginfo()),True,txtcolour)
+
+    # Update onairstudio and change backgound and font colours according to onairstudio
+    onairinfo = str(readonairstudio())
+    if onairinfo == studtext:
+        pygame.draw.rect(bg, onaircolour,(xonairstudbox, yonairstudbox, onairstudboxx, onairstudboxy))
+        onairstudio = onairfont.render(onairinfo + " OnAir",True,txtcolour)
+    else:
+        pygame.draw.rect(bg, bgcolour,(xonairstudbox, yonairstudbox, onairstudboxx, onairstudboxy))
+        onairstudio = onairfont.render(onairinfo + " OnAir",True,onaircolour)
 
     
     # Render the text
