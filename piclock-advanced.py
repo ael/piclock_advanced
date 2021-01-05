@@ -17,9 +17,9 @@ bg = pygame.display.set_mode()
 mictimer_time = 0
 mictimer_started = False
 mictimer_starttime = 0
-studtext="Studio 1" #define studio, where infoscreen is installed
-songfilepath="./songinfo.txt"
-onairstudiofilepath="./onairstudio.txt"
+studtext="Studio 2" #define studio, where infoscreen is installed
+songfilepath="/mnt/rds/now-onair.txt"
+onairstudiofilepath="/mnt/rds/onair-studio.txt"
 pygame.mouse.set_visible(False)
 
 # Change colour to preference (R,G,B) 255 max value
@@ -42,13 +42,13 @@ dotsize        = int(bg.get_height()/110)
 hradius        = bg.get_height()/3
 secradius      = hradius - (bg.get_height()/26)
 indtxtsize     = int(bg.get_height()/7)
-txtsize        = int(bg.get_height()/9)
-onairtxtsize   = int(bg.get_height()/11)
-infotxtsize   = int(bg.get_height()/10)
+txtsize        = int(bg.get_height()/10)
+onairtxtsize   = int(bg.get_height()/10)
+infotxtsize   = int(bg.get_height()/15)
 indboxy        = int(bg.get_height()/6)
 indboxx        = int(bg.get_width()/4)
-onairstudboxy  = int(bg.get_height()/7)
-onairstudboxx  = int(bg.get_width()/2.5)
+onairstudboxy  = int(bg.get_height()/9)
+onairstudboxx  = int(bg.get_width()/3.5)
 
 # Coords of items on display
 xclockpos      = int(bg.get_width()*0.5)
@@ -58,8 +58,8 @@ xtxtpos_left   = int(bg.get_width()*0.14)
 xindboxpos     = int(xtxtpos-(indboxx/2))
 xindboxpos_left= int(xtxtpos_left-(indboxx/2))
 xonairstudtxt  = int (bg.get_width()*0.1)
-xonairstudbox  = int(xonairstudtxt-(onairstudboxx/2))
-yonairstudbox  = int((ycenter*0.15)-(onairstudboxy/2))
+xonairstudbox  = int(xonairstudtxt-(onairstudboxx/3.1))
+yonairstudbox  = int((ycenter*0.14)-(onairstudboxy/2))
 ind1y          = int((ycenter*0.4)-(indboxy/2))  #onair     
 ind2y          = int((ycenter*0.8)-(indboxy/2))  #mic
 ind3y          = int((ycenter*0.8)-(indboxy/2))  #tel 
@@ -68,7 +68,7 @@ txthmy         = int(ycenter)
 txtsecy        = int(ycenter+digiclockspace)
 studioposx     = int(bg.get_width()*0.5)
 studioposy     = int(bg.get_height()*0.07)
-onairstudposx  = int(bg.get_width()*0.01)
+onairstudposx  = int(bg.get_width()*0.014)
 onairstudposy  = int(bg.get_height()*0.07)
 songposx       = int(bg.get_width()*0.5)
 songposy       = int(bg.get_height()*0.94)
@@ -120,20 +120,23 @@ def paraeqshy(shy):
 
 
 def readsonginfo():
-    songfile=codecs.open(songfilepath, "r", "utf-8")
-    #if songfile.mode =='r':
-    contents = songfile.read()
-    songfile.close()
-    #else:
-    #    songfile.close()
-        #print (contents)
-    
+    try:
+        #songfile=codecs.open(songfilepath, "r", "utf-8")
+        songfile=open(songfilepath, "r")
+        contents = songfile.read()
+        songfile.close()
+    except IOError:
+        contents = "Kann Songinfo-File nicht lesen!"    
     return contents.strip('\n')
 
 def readonairstudio():
-    onairstudfile=codecs.open(onairstudiofilepath, "r", "utf-8")
-    contents = onairstudfile.read()
-    onairstudfile.close()
+    try:
+        #onairstudfile=codecs.open(onairstudiofilepath, "r", "utf-8")
+        onairstudfile=open(onairstudiofilepath, "r")
+        contents = onairstudfile.read()
+        onairstudfile.close()
+    except IOError:
+        contents = "Kann OnAir-Studio-File nicht lesen!"
     return contents.strip('\n')
 
 # This is where pygame does its tricks
@@ -207,7 +210,8 @@ while True :
     timer = indfont.render(time.strftime('%M:%S', time.gmtime(mictimer_time/1000)),True,timercolour)
 
     # Update songinfo
-    songinfo = onairfont.render(str(readsonginfo()),True,txtcolour)
+    songinfo = infofont.render(str(readsonginfo()),True,txtcolour)
+    songpos    = songinfo.get_rect(centerx=songposx,centery=songposy)
 
     # Update onairstudio and change backgound and font colours according to onairstudio
     onairinfo = str(readonairstudio())
