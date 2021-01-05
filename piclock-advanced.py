@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import pygame , sys , math, time, os
+import pygame , sys , math, time, os, codecs
 import RPi.GPIO as GPIO
 from pygame.locals import *
 os.environ['SDL_VIDEODRIVER']="fbcon"
@@ -18,7 +18,7 @@ mictimer_time = 0
 mictimer_started = False
 mictimer_starttime = 0
 studtext="Studio 1 OnAir"
-song="Interpret - Titel"
+songfilepath="./songinfo.txt"
 pygame.mouse.set_visible(False)
 
 # Change colour to preference (R,G,B) 255 max value
@@ -34,8 +34,8 @@ txtcolour      = (210, 210, 210)
 onaircolour    = (255, 0,   0  )
 
 # Scaling to the right size for the display
-digiclocksize  = int(bg.get_height()/6)
-digiclocksizesec  = int(bg.get_height()/10)
+digiclocksize  = int(bg.get_height()/5)
+digiclocksizesec  = int(bg.get_height()/8)
 digiclockspace = int(bg.get_height()/6)
 dotsize        = int(bg.get_height()/110)
 hradius        = bg.get_height()/3
@@ -43,6 +43,7 @@ secradius      = hradius - (bg.get_height()/26)
 indtxtsize     = int(bg.get_height()/7)
 txtsize        = int(bg.get_height()/9)
 onairtxtsize   = int(bg.get_height()/11)
+infotxtsize   = int(bg.get_height()/10)
 indboxy        = int(bg.get_height()/6)
 indboxx        = int(bg.get_width()/4)
 
@@ -72,6 +73,7 @@ clockfontsec  = pygame.font.Font(None,digiclocksizesec)
 indfont       = pygame.font.Font(None,indtxtsize)
 txtfont       = pygame.font.Font(None,txtsize)
 onairfont     = pygame.font.Font(None, onairtxtsize)
+infofont      = pygame.font.Font(None, infotxtsize)
 
 # Indicator text - edit text in quotes to desired i.e. "MIC" will show MIC on display
 doortext = u"TÜR" # umwandlung in utf-8 wegen Umlaut
@@ -82,7 +84,7 @@ ind4txt       = indfont.render(doortext,True,bgcolour)
 timer         = indfont.render(str(mictimer_time),True,timercolour)
 studio        = txtfont.render("Studio 1",True,txtcolour)
 onairstudio   = onairfont.render(studtext,True,onaircolour)
-songinfo      = onairfont.render(song,True,txtcolour)
+songinfo      = infofont.render("test",True,txtcolour)
 
 # Indicator positions
 txtposind1 = ind1txt.get_rect(centerx=xtxtpos,centery=ycenter*0.4)
@@ -110,7 +112,17 @@ def paraeqshx(shx):
 def paraeqshy(shy):
     return ycenter-(int(hradius*(math.sin(math.radians((shy)+90)))))
 
-    
+
+def readsonginfo():
+    songfile=codecs.open(songfilepath, "r", "utf-8")
+    #if songfile.mode =='r':
+    contents = songfile.read()
+    songfile.close()
+    #else:
+    #    songfile.close()
+        #print (contents)
+    return contents
+
 # This is where pygame does its tricks
 while True :
     pygame.display.update()
@@ -156,10 +168,10 @@ while True :
 
     if GPIO.input(12): #mic
         pygame.draw.rect(bg, offcolour,(xindboxpos_left, ind2y, indboxx, indboxy))
-        mictimer_started = False        
+        mictimer_started = False # stop mictimer
     else:
         pygame.draw.rect(bg, ind2colour,(xindboxpos_left, ind2y, indboxx, indboxy))
-        if  mictimer_started == False:
+        if  mictimer_started == False: # if mictime is not running get current time and set mictimer running
                 mictimer_starttime = pygame.time.get_ticks()
                 mictimer_started = True
         
@@ -180,6 +192,9 @@ while True :
 
     # Write timer and convert from ms in s, and from s in mm:ss
     timer = indfont.render(time.strftime('%M:%S', time.gmtime(mictimer_time/1000)),True,timercolour)
+
+    # Update songinfo
+    songinfo = onairfont.render(str(readsonginfo()),True,txtcolour)
 
     
     # Render the text
