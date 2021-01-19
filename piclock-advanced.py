@@ -58,9 +58,9 @@ xtxtpos_left   = int(bg.get_width()*0.14)
 xindboxpos     = int(xtxtpos-(indboxx/2))
 xindboxpos_left= int(xtxtpos_left-(indboxx/2))
 xonairstudtxt  = int (bg.get_width()*0.1)
-xonairstudbox  = int(xonairstudtxt-(onairstudboxx/3.1))
+xonairstudbox  = int(xonairstudtxt-(onairstudboxx/2.9))
 yonairstudbox  = int((ycenter*0.14)-(onairstudboxy/2))
-ind1y          = int((ycenter*0.4)-(indboxy/2))  #onair     
+ind1y          = int((ycenter*0.4)-(indboxy/2))  #pegel     
 ind2y          = int((ycenter*0.8)-(indboxy/2))  #mic
 ind3y          = int((ycenter*0.8)-(indboxy/2))  #tel 
 ind4y          = int((ycenter*1.2)-(indboxy/2))  #tür
@@ -122,7 +122,7 @@ def paraeqshy(shy):
 def readsonginfo():
     try:
         #songfile=codecs.open(songfilepath, "r", "utf-8")
-        songfile=open(songfilepath, "r")
+        songfile=open(songfilepath, 'r', encoding='utf-8-sig')
         contents = songfile.read()
         songfile.close()
     except IOError:
@@ -177,10 +177,10 @@ while True :
     txtpossec     = digiclocksec.get_rect(centerx=xclockpos,centery=txtsecy)
 
     # Function for the indicators
-    if GPIO.input(11): #onair
-        pygame.draw.rect(bg, offcolour,(xindboxpos, ind1y, indboxx, indboxy))
-    else:
-        pygame.draw.rect(bg, ind1colour,(xindboxpos, ind1y, indboxx, indboxy))
+   # if GPIO.input(11): #pegel currently not used
+    #    pygame.draw.rect(bg, offcolour,(xindboxpos, ind1y, indboxx, indboxy))
+    #else:
+     #   pygame.draw.rect(bg, ind1colour,(xindboxpos, ind1y, indboxx, indboxy))
 
     if GPIO.input(12): #mic
         pygame.draw.rect(bg, offcolour,(xindboxpos_left, ind2y, indboxx, indboxy))
@@ -226,7 +226,7 @@ while True :
     # Render the text
     bg.blit(digiclockhm, txtposhm)
     bg.blit(digiclocksec, txtpossec)
-    bg.blit(ind1txt, txtposind1) #onair
+    #bg.blit(ind1txt, txtposind1) #pegel currently not used
     bg.blit(ind2txt, txtposind2) #mic
     bg.blit(ind3txt, txtposind3) #tel
     bg.blit(ind4txt, txtposind4) #tür
