@@ -1,6 +1,9 @@
-### PiClock Advanced
+PiClock Advanced / Studio Infoscreen
+================
 Clock / Infoscreen for radiostudios  
 Basically this is just a modified and extended Version of this one: (https://github.com/jdgwarren/pirsclockfull)
+
+## Description - what does this thing?
 
 You can see a clock with the typical LED ring for the seconds and some areas for signalisation of different things like mic, phone, door or whatever you want. You can configure the text and the colors the indicators will light up with easily on your own. 
 
@@ -11,6 +14,8 @@ Both information, the onair info and the song info is polled from textfiles. I'm
 
 Currently there could also be found an indicator named "Pegel" in the code which is german for "level". In this case audio level of course. It has no function yet and is commented out. Maybe it's possible to get the audio level of the associated studio via a small USB soundcard and let the indicator light up if the audio level is to high. The soundprocessing doesn't like getting driven with too much input level. I haven't looked into that, but would be nice.
 But you can also use it as a 4th indicator with one of the GPIs, no problem, the code is still there.
+
+## Some pictures
 
 YAY, I finally made some pictures of the Infoscreen, so you can get an impression of that thingy:
 
