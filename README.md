@@ -12,4 +12,22 @@ Both information, the onair info and the song info is polled from textfiles. I'm
 Currently there could also be found an indicator named "Pegel" in the code which is german for "level". In this case audio level of course. It has no function yet and is commented out. Maybe it's possible to get the audio level of the associated studio via a small USB soundcard and let the indicator light up if the audio level is to high. The soundprocessing doesn't like getting driven with too much input level. I haven't looked into that, but would be nice.
 But you can also use it as a 4th indicator with one of the GPIs, no problem, the code is still there.
 
+YAY, I finally made some pictures of the Infoscreen, so you can get an impression of that thingy:
 
+This is the screen in our Studio 2 when it is off air:
+![Studio 2 offair](/pictures/infoscreen_offair.jpg)
+Current broadcasting source is "Loop/Zara".
+
+This is the screen when Studio 2 is onair:
+![Studio 2 onair](/pictures/infoscreen_onair.jpg)
+See also the change of the songinfo on the bottom. When the broadcasting source changes, also the source of the songinfo changes. But that is handeled in the audio router, the infoscrren is just showing the result.
+
+Here the mic is on and the mic timer is running:
+![Studio 2 Mic on](/pictures/infoscreen_mic.jpg)
+
+Someone is calling on the phone:
+![Studio 2 phone ringing](/pictures/infoscreen_tel.jpg)
+Here you also can see the stopped mic timer when mic is closed.
+
+The TÜR (door) indicator would light up in blue, but I was too lazy and it was cold outside ;) And the colour is configurable anyway.
+Of course all the indicators can light up simultaneuosly.
