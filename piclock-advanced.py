@@ -121,21 +121,21 @@ def paraeqshy(shy):
 
 def readsonginfo():
     try:
-        #songfile=codecs.open(songfilepath, "r", "utf-8")
+        # songfile=codecs.open(songfilepath, "r", "utf-8")
         songfile=open(songfilepath, 'r', encoding='utf-8-sig')
         contents = songfile.read()
         songfile.close()
-    except IOError:
+    except:
         contents = "Kann Songinfo-File nicht lesen!"    
     return contents.strip('\n')
 
 def readonairstudio():
     try:
-        #onairstudfile=codecs.open(onairstudiofilepath, "r", "utf-8")
+        onairstudfile=codecs.open(onairstudiofilepath, "r", "utf-8")
         onairstudfile=open(onairstudiofilepath, "r")
         contents = onairstudfile.read()
         onairstudfile.close()
-    except IOError:
+    except:
         contents = "Kann OnAir-Studio-File nicht lesen!"
     return contents.strip('\n')
 
@@ -210,7 +210,12 @@ while True :
     timer = indfont.render(time.strftime('%M:%S', time.gmtime(mictimer_time/1000)),True,timercolour)
 
     # Update songinfo
-    songinfo = infofont.render(str(readsonginfo()),True,txtcolour)
+    # Try-Except-Bloc because we had sporadic errors here
+    try:
+        songinfo = infofont.render(str(readsonginfo()),True,txtcolour)
+    except:
+        songinfo = infofont.render("FEHLER: Ich kann das nicht richtig lesen!",True,txtcolour)
+
     songpos    = songinfo.get_rect(centerx=songposx,centery=songposy)
 
     # Update onairstudio and change backgound and font colours according to onairstudio
