@@ -39,3 +39,21 @@ Here you also can see the stopped mic timer when mic is closed.
 
 The TÜR (door) indicator would light up in blue, but I was too lazy and it was cold outside ;) And the colour is configurable anyway.
 Of course all the indicators can light up simultaneuosly.
+
+## How to use?
+### Prerequisites
+
+ - PyGame
+    Because PyGame is used to render the output.
+ - xServer
+    Because a graphical interface is needed to present the output of PyGame.
+
+So just use the normal PiOS-Image. Everything will rund out of the box. 
+If you use the minimal image, you have to install a lot of additional things to get the clock running.
+
+### How to install?
+
+- Just clone the repo
+- Start the piclock-advanced.py with sudo. Otherwise you won't have access to the GPIO-Pins.
+        sudo python piclock-advanced.py
+- You do not necessarily need the other files besides the python file. You can delete them.
