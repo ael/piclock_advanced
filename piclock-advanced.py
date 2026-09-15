@@ -4,7 +4,7 @@ import pygame, sys, math, time, os, codecs, socket, json
 import RPi.GPIO as GPIO
 from pygame.locals import *
 
-os.environ['SDL_VIDEODRIVER'] = "fbcon"
+os.environ['SDL_VIDEODRIVER'] = "kmsdrm"
 
 # Setting up the GPIO and inputs with pull up
 GPIO.setmode(GPIO.BOARD)
